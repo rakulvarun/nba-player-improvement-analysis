@@ -1,4 +1,3 @@
-# nba-player-improvement-analysis
 # What Drives NBA Player Improvement?
 
 ### A Multi-Factor Data Analysis
