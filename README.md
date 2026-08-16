@@ -2,19 +2,19 @@
 
 ### A Multi-Factor Data Analysis
 
-## 📌 Overview
+##  Overview
 
 This project analyzes NBA player performance across multiple seasons to identify the key factors that drive player improvement. While common assumptions suggest that increased opportunity (such as higher usage) leads to better performance, this analysis evaluates whether efficiency, usage, or age plays the most significant role.
 
 ---
 
-## ❓ Problem
+##  Problem
 
 What factors actually influence how NBA players improve over time?
 
 ---
 
-## 📊 Data
+##  Data
 
 * Source: Kaggle NBA player dataset (multi-season player statistics)
 * Includes:
@@ -26,7 +26,7 @@ What factors actually influence how NBA players improve over time?
 
 ---
 
-## ⚙️ Methodology
+##  Methodology
 
 ### 1. Data Preparation
 
@@ -56,7 +56,7 @@ Developed a custom improvement score combining:
 
 ---
 
-## 📈 Key Findings
+##  Key Findings
 
 * **Efficiency (TS%) showed the strongest relationship with improvement**
 
@@ -76,7 +76,7 @@ Developed a custom improvement score combining:
 
 ---
 
-## 🧠 Conclusion
+##  Conclusion
 
 Player improvement is influenced by multiple factors, but **efficiency gains are the strongest indicator of development**. While increased opportunity (usage) contributes to improvement, it is not the primary driver.
 
@@ -96,7 +96,7 @@ This confirms that both efficiency and usage matter, but efficiency remains the 
 
 ---
 
-## 📚 What I Learned
+##  What I Learned
 
 * How to work with real-world, imperfect datasets
 * Techniques for aligning time-series data across entities
@@ -105,7 +105,7 @@ This confirms that both efficiency and usage matter, but efficiency remains the 
 
 ---
 
-## 🚀 Future Improvements
+##  Future Improvements
 
 * Incorporate additional advanced metrics (PER, BPM, etc.)
 * Expand dataset to include more historical seasons
@@ -114,7 +114,7 @@ This confirms that both efficiency and usage matter, but efficiency remains the 
 
 ---
 
-## 📎 Project Structure
+##  Project Structure
 
 * `analysis.ipynb` — main notebook containing full analysis
 * `README.md` — project overview and findings
@@ -122,6 +122,6 @@ This confirms that both efficiency and usage matter, but efficiency remains the 
 
 ---
 
-## 🏁 Final Note
+##  Final Note
 
 This project demonstrates how data science can be used to challenge assumptions and uncover deeper insights in sports analytics. Rather than relying on surface-level trends, it highlights the importance of structured analysis, statistical reasoning, and clear communication of results.
