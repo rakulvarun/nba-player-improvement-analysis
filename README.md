@@ -4,7 +4,7 @@
 
 ##  Overview
 
-This project analyzes NBA player performance across multiple seasons to identify the key factors that drive player improvement. While common assumptions suggest that increased opportunity (such as higher usage) leads to better performance, this analysis evaluates whether efficiency, usage, or age plays the most significant role.
+This project analyzes NBA player's performance across multiple seasons to identify the key factors that drive player improvement. While a common assumption is that increased opportunity (such as higher usage) leads to better performance, this analysis evaluates whether efficiency, usage, or age plays the most significant role.
 
 ---
 
@@ -32,11 +32,11 @@ What factors actually influence how NBA players improve over time?
 
 * Cleaned dataset and removed irrelevant columns
 * Sorted data by player and season
-* Filtered out low-game seasons to reduce noise
+* Filtered out low-game seasons to reduce inconsistency
 
 ### 2. Season Alignment
 
-* Matched each player’s stats with their following season using grouped shifting
+* Matched each player's stats with their following season using grouped shifting
 * Created “next season” variables to measure year-to-year changes
 
 ### 3. Improvement Metric
@@ -78,7 +78,7 @@ Developed a custom improvement score combining:
 
 ##  Conclusion
 
-Player improvement is influenced by multiple factors, but **efficiency gains are the strongest indicator of development**. While increased opportunity (usage) contributes to improvement, it is not the primary driver.
+Player improvement is influenced by multiple factors, but **improvement in efficiency is the strongest indicator of development**. While increased opportunity (usage) contributes to improvement, it's not the primary driver.
 
 These findings suggest that **skill development (how well a player performs) matters more than opportunity alone (how much a player is used).**
 
@@ -107,7 +107,7 @@ This confirms that both efficiency and usage matter, but efficiency remains the 
 
 ##  Future Improvements
 
-* Incorporate additional advanced metrics (PER, BPM, etc.)
+* Incorporate additional advanced metrics (BLK, +/- rating, etc.)
 * Expand dataset to include more historical seasons
 * Improve predictive modeling techniques
 * Analyze differences between player types (rookies vs veterans, roles, etc.)
