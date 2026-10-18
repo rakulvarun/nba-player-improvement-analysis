@@ -1,71 +1,68 @@
 # What Is Associated with NBA Player Improvement?
 
-A multi-season data analysis of efficiency, usage, and age
+A multi-season data analysis of efficiency, usage, scoring, and age, with a check on how much the weights matter
 
 ## Overview
 
-A common assumption is that more opportunity (higher usage) makes a player better. This project builds a year-over-year improvement score from NBA player statistics, then compares how change in efficiency, change in usage, and age relate to that score.
+A common assumption is that more opportunity (higher usage) makes a player better. This project builds a year-over-year improvement score from NBA player statistics and asks which factors are associated with it. It then re-runs the analysis with a different weighting to test whether the first answer holds up. **It did not hold up, and that is the main finding** (see Results).
 
 **Tools:** Python, pandas, Matplotlib, scikit-learn (Google Colab / Jupyter Notebook)
 
 ## Question
 
-Which factors are most strongly associated with how much an NBA player's performance changes from one season to the next?
+Which factors are most strongly associated with how much an NBA player's performance changes from one season to the next, and do the conclusions depend on how "improvement" is defined?
 
 ## Data
 
 - **Source:** Kaggle NBA player dataset (`all_seasons.csv`): [add link to the exact dataset]
 - **Coverage:** 1996-97 to [last season in the file] (one row per player per season, 22 columns)
-- **Size after processing:** 10,293 player-season pairs (each season matched to the same player's following season)
+- **Sample:** 10,293 player-season pairs in the first run; [N] after the games filter in the second run
 - **Fields used:** player name, age, points, assists, true shooting percentage (TS%), usage rate (USG%), games played, season
 
 The dataset is not included in this repository. Download it from the link above and upload `all_seasons.csv` when the notebook asks for it.
 
 ## Methodology
 
-1. **Data preparation:** Dropped the CSV index column and sorted the data by player and season.
-2. **Season alignment:** For each player, matched every season with the player's next recorded season using a grouped shift, and dropped seasons with no following season (a player's last season).
-3. **Improvement score:** Combined year-over-year changes in four measures:
-
-   `improvement = Δpoints + 0.5 × Δassists + 10 × ΔTS% + 0.3 × ΔUSG%`
-
-   The weights were chosen by hand, with extra weight on efficiency.
-4. **Analysis:** Plotted age and usage change against improvement, computed correlations, and fit a linear regression predicting the improvement score from age, usage change, and TS% change.
+1. **Preparation:** Dropped the CSV index column and sorted by player and season.
+2. **Season alignment:** Matched each season with the same player's next recorded season using a grouped shift, and dropped seasons with no following season.
+3. **Run 1: hand-weighted score.** `improvement = Δpoints + 0.5 × Δassists + 10 × ΔTS% + 0.3 × ΔUSG%`. The weights were chosen by hand, with extra weight on efficiency. No games filter was applied.
+4. **Run 2: equal-weight score.** Standardized (z-scored) the four changes and added them with equal weight. Kept only player-seasons with at least 20 games played in both the current and next season.
+5. **Analysis:** Computed correlations between each factor and the score in both runs, and fit a linear regression in Run 1.
 
 ## Results
 
-| Factor | Correlation with improvement score |
-|---|---|
-| Change in TS% | **0.54** |
-| Change in usage | **0.30** |
-| Age | **-0.28** |
+Correlation of each factor with the improvement score:
 
-- Change in TS% had the strongest correlation with the improvement score.
-- Change in usage had a moderate positive correlation.
-- Older players tended to have lower improvement scores.
-- Change in TS% and change in usage were almost uncorrelated with each other (0.02), so they are not just measuring the same thing.
+| Factor | Run 1: hand-weighted, no games filter | Run 2: equal-weight, 20+ games |
+|---|---|---|
+| Change in points | not computed | **0.90** |
+| Change in assists | not computed | **0.69** |
+| Change in usage | **0.30** | **0.62** |
+| Change in TS% | **0.54** | **0.54** |
+| Age | **-0.28** | **-0.30** |
 
-**Regression** (predicting the improvement score from age, usage change, and TS% change; R² ≈ 0.42): standardized coefficients were about **0.52** for TS% change, **0.27** for usage change, and **-0.21** for age. Standardized coefficients are used because the raw coefficients (age -0.20, usage change 28.7, TS% change 21.1) are in different units and cannot be compared directly.
+- **The ranking changed with the weights.** In Run 1, TS% change looked strongest and usage looked weak. In Run 2, change in points is by far the strongest, usage roughly doubles to 0.62, and TS% change is the weakest of the four components. The first conclusion ("efficiency matters most") came from the weights, not from the data.
+- **Age is the stable result.** Age is not part of the score, and its correlation was about -0.3 in both runs: older players tended to have lower improvement scores.
+- **Efficiency and usage changes were nearly independent** in Run 1 (correlation 0.02).
+- **Run 1 regression** (improvement score on age, usage change, and TS% change; R² ≈ 0.42): standardized coefficients were about 0.52 (TS% change), 0.27 (usage change), and -0.21 (age). This regression was not repeated for Run 2.
 
 ## Conclusion
 
-Under this scoring method, changes in efficiency were most strongly associated with the improvement score, followed by changes in usage. Age was the only factor not built into the score, and older players tended to score lower. These results describe how the score behaves; they do not show that efficiency matters more than opportunity for real player development. See the limitations below, especially the first one.
+This analysis does **not** show that efficiency matters more than opportunity. The factor that looked strongest depended on how the score was weighted. Because every component is part of the score, the correlations mostly reflect how the score was built, so Run 2 also does not show that scoring change "matters most." The one result that held across both versions is that older players tended to improve less. A real answer needs an outcome that is not made from the same statistics (see Future Improvements).
 
 ## Limitations
 
-- **The score favors efficiency by design.** TS% change was given a weight of 10 and is part of the score, so a strong correlation between TS% change and the score is partly built in. Usage change is also a component (weight 0.3). The regression has the same problem, and its R² is high mostly because the predictors are ingredients of the score.
-- **Points and assists changes were not analyzed.** Change in points is likely the largest part of the score and was not compared with the other factors.
+- **Circular measurement.** The factors compared (changes in points, assists, usage, and TS%) are the ingredients of the score, so their correlations with it are partly built in. This is why the results change when the weights change.
+- **Arbitrary choices.** The weights and the 20-game cutoff are judgment calls and were not tested across other values.
 - **Correlation, not causation.** A player might gain efficiency because he improved, or because of a better role, teammates, or coaching. This analysis cannot separate those.
-- **Seasons are matched by player name only.** The code takes each player's next recorded season without checking that it is the next calendar season (a gap year would be missed), and two players with the same name would be mixed together.
-- **No minimum-games filter.** Games played was loaded but not used to filter, so low-playing-time seasons (including seasons with 0.0 points per game) are included and add noise.
-- **Selection effects.** Players with no following season (cut, retired, or left the league) are excluded.
+- **Seasons are matched by player name only.** The code takes each player's next recorded season without checking that it is the next calendar season, and two players with the same name would be mixed together.
+- **Selection effects.** Players with no following season (cut, retired, or left the league) are excluded, as are low-games seasons in Run 2.
 
 ## Future Improvements
 
-- Rebuild the score with standardized components and equal weights, and check whether the conclusions change
-- Compare change in points and assists against the other factors
-- Test the findings against an outcome that is not part of the score, such as next-season minutes, win shares, or box plus/minus
-- Require consecutive seasons and a minimum number of games played
+- Test against an outcome that is not made from the score's inputs, such as next-season minutes, win shares, or box plus/minus
+- Repeat Run 2 with other games cutoffs (for example 10 and 40) and other weightings
+- Require consecutive seasons and match players by ID instead of name
 - Control for minutes, position, and team context
 
 ## Files
