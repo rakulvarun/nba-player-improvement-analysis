@@ -1,127 +1,74 @@
-# What Drives NBA Player Improvement?
+# What Is Associated with NBA Player Improvement?
 
-### A Multi-Factor Data Analysis
+A multi-season data analysis of efficiency, usage, and age
 
-##  Overview
+## Overview
 
-This project analyzes NBA player's performance across multiple seasons to identify the key factors that drive player improvement. While a common assumption is that increased opportunity (such as higher usage) leads to better performance, this analysis evaluates whether efficiency, usage, or age plays the most significant role.
+A common assumption is that more opportunity (higher usage) makes a player better. This project builds a year-over-year improvement score from NBA player statistics, then compares how change in efficiency, change in usage, and age relate to that score.
 
----
+**Tools:** Python, pandas, Matplotlib, scikit-learn (Google Colab / Jupyter Notebook)
 
-##  Problem
+## Question
 
-What factors actually influence how NBA players improve over time?
+Which factors are most strongly associated with how much an NBA player's performance changes from one season to the next?
 
----
+## Data
 
-##  Data
+- **Source:** Kaggle NBA player dataset (`all_seasons.csv`): [add link to the exact dataset]
+- **Coverage:** 1996-97 to [last season in the file] (one row per player per season, 22 columns)
+- **Size after processing:** 10,293 player-season pairs (each season matched to the same player's following season)
+- **Fields used:** player name, age, points, assists, true shooting percentage (TS%), usage rate (USG%), games played, season
 
-* Source: Kaggle NBA player dataset (multi-season player statistics)
-* Includes:
+The dataset is not included in this repository. Download it from the link above and upload `all_seasons.csv` when the notebook asks for it.
 
-  * Player information (name, age, team)
-  * Performance metrics (points, assists, rebounds)
-  * Advanced statistics (true shooting percentage, usage rate)
-  * Seasonal data across multiple years
+## Methodology
 
----
+1. **Data preparation:** Dropped the CSV index column and sorted the data by player and season.
+2. **Season alignment:** For each player, matched every season with the player's next recorded season using a grouped shift, and dropped seasons with no following season (a player's last season).
+3. **Improvement score:** Combined year-over-year changes in four measures:
 
-##  Methodology
+   `improvement = Δpoints + 0.5 × Δassists + 10 × ΔTS% + 0.3 × ΔUSG%`
 
-### 1. Data Preparation
+   The weights were chosen by hand, with extra weight on efficiency.
+4. **Analysis:** Plotted age and usage change against improvement, computed correlations, and fit a linear regression predicting the improvement score from age, usage change, and TS% change.
 
-* Cleaned dataset and removed irrelevant columns
-* Sorted data by player and season
-* Filtered out low-game seasons to reduce inconsistency
+## Results
 
-### 2. Season Alignment
+| Factor | Correlation with improvement score |
+|---|---|
+| Change in TS% | **0.54** |
+| Change in usage | **0.30** |
+| Age | **-0.28** |
 
-* Matched each player's stats with their following season using grouped shifting
-* Created “next season” variables to measure year-to-year changes
+- Change in TS% had the strongest correlation with the improvement score.
+- Change in usage had a moderate positive correlation.
+- Older players tended to have lower improvement scores.
+- Change in TS% and change in usage were almost uncorrelated with each other (0.02), so they are not just measuring the same thing.
 
-### 3. Improvement Metric
+**Regression** (predicting the improvement score from age, usage change, and TS% change; R² ≈ 0.42): standardized coefficients were about **0.52** for TS% change, **0.27** for usage change, and **-0.21** for age. Standardized coefficients are used because the raw coefficients (age -0.20, usage change 28.7, TS% change 21.1) are in different units and cannot be compared directly.
 
-Developed a custom improvement score combining:
+## Conclusion
 
-* Scoring (points)
-* Playmaking (assists)
-* Efficiency (true shooting %)
-* Role/opportunity (usage rate)
+Under this scoring method, changes in efficiency were most strongly associated with the improvement score, followed by changes in usage. Age was the only factor not built into the score, and older players tended to score lower. These results describe how the score behaves; they do not show that efficiency matters more than opportunity for real player development. See the limitations below, especially the first one.
 
-### 4. Analysis
+## Limitations
 
-* Visualized relationships between variables
-* Computed correlation coefficients
-* Built a linear regression model to evaluate factor importance
+- **The score favors efficiency by design.** TS% change was given a weight of 10 and is part of the score, so a strong correlation between TS% change and the score is partly built in. Usage change is also a component (weight 0.3). The regression has the same problem, and its R² is high mostly because the predictors are ingredients of the score.
+- **Points and assists changes were not analyzed.** Change in points is likely the largest part of the score and was not compared with the other factors.
+- **Correlation, not causation.** A player might gain efficiency because he improved, or because of a better role, teammates, or coaching. This analysis cannot separate those.
+- **Seasons are matched by player name only.** The code takes each player's next recorded season without checking that it is the next calendar season (a gap year would be missed), and two players with the same name would be mixed together.
+- **No minimum-games filter.** Games played was loaded but not used to filter, so low-playing-time seasons (including seasons with 0.0 points per game) are included and add noise.
+- **Selection effects.** Players with no following season (cut, retired, or left the league) are excluded.
 
----
+## Future Improvements
 
-##  Key Findings
+- Rebuild the score with standardized components and equal weights, and check whether the conclusions change
+- Compare change in points and assists against the other factors
+- Test the findings against an outcome that is not part of the score, such as next-season minutes, win shares, or box plus/minus
+- Require consecutive seasons and a minimum number of games played
+- Control for minutes, position, and team context
 
-* **Efficiency (TS%) showed the strongest relationship with improvement**
+## Files
 
-  * Correlation: **0.54**
-
-* **Usage (opportunity) had a moderate effect**
-
-  * Correlation: **0.30**
-
-* **Age had a negative relationship with improvement**
-
-  * Correlation: **-0.28**
-
-* **Efficiency and usage were largely independent**
-
-  * Near-zero correlation between TS% change and usage change
-
----
-
-##  Conclusion
-
-Player improvement is influenced by multiple factors, but **improvement in efficiency is the strongest indicator of development**. While increased opportunity (usage) contributes to improvement, it's not the primary driver.
-
-These findings suggest that **skill development (how well a player performs) matters more than opportunity alone (how much a player is used).**
-
----
-
-## 🤖 Model Insights
-
-A linear regression model was used to evaluate the combined effect of variables:
-
-* Age → small negative impact
-* Usage change → strong positive contribution
-* Efficiency change → strong positive contribution
-
-This confirms that both efficiency and usage matter, but efficiency remains the most consistently predictive factor.
-
----
-
-##  What I Learned
-
-* How to work with real-world, imperfect datasets
-* Techniques for aligning time-series data across entities
-* The difference between correlation and causation
-* How to extract meaningful insights from statistical models
-
----
-
-##  Future Improvements
-
-* Incorporate additional advanced metrics (BLK, +/- rating, etc.)
-* Expand dataset to include more historical seasons
-* Improve predictive modeling techniques
-* Analyze differences between player types (rookies vs veterans, roles, etc.)
-
----
-
-##  Project Structure
-
-* `analysis.ipynb` — main notebook containing full analysis
-* `README.md` — project overview and findings
-* `data/` — dataset (or link to source)
-
----
-
-##  Final Note
-
-This project demonstrates how data science can be used to challenge assumptions and uncover deeper insights in sports analytics. Rather than relying on surface-level trends, it highlights the importance of structured analysis, statistical reasoning, and clear communication of results.
+- `NBAanalysis.ipynb`: full analysis notebook
+- `README.md`: project overview and findings
